@@ -1,3 +1,7 @@
+package com.restaurant.orderManagement.model.entity;
+
+import com.restaurant.orderManagement.model.enums.MealType;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +24,7 @@ public class Order implements Serializable
     private LocalDateTime orderTime;
 
     /**
-     * Default constructor for Order
+     * Default constructor for com.restaurant.orderManagement.model.entity.Order
      */
     public Order()
     {
@@ -34,7 +38,7 @@ public class Order implements Serializable
     }
 
     /**
-     * Constructor for Order with customer details
+     * Constructor for com.restaurant.orderManagement.model.entity.Order with customer details
      * @param customerName the customer's name
      * @param contactNumber the customer's contact number
      * @param deliveryAddress the delivery address
@@ -153,7 +157,7 @@ public class Order implements Serializable
 
     /**
      * Gets the meal type
-     * @return the meal type as a MealType enum
+     * @return the meal type as a com.restaurant.orderManagement.model.enums.MealType enum
      */
     public MealType getMealType()
     {
@@ -226,13 +230,13 @@ public class Order implements Serializable
         StringBuilder orderDetails = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-        orderDetails.append("Order Details:\n");
+        orderDetails.append("com.restaurant.orderManagement.model.entity.Order Details:\n");
         orderDetails.append("Customer: ").append(customerName).append("\n");
         orderDetails.append("Contact: ").append(contactNumber).append("\n");
         orderDetails.append("Address: ").append(deliveryAddress).append("\n");
-        orderDetails.append("Order Time: ").append(orderTime.format(formatter)).append("\n");
+        orderDetails.append("com.restaurant.orderManagement.model.entity.Order Time: ").append(orderTime.format(formatter)).append("\n");
         orderDetails.append("Meal Type: ").append(mealType.toString()).append("\n");
-        orderDetails.append("Food Items:\n");
+        orderDetails.append("com.restaurant.orderManagement.model.entity.Food Items:\n");
 
         for (int i = 0; i < foodItems.size(); i++)
         {

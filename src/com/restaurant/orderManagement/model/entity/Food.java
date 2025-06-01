@@ -1,3 +1,7 @@
+package com.restaurant.orderManagement.model.entity;
+
+import com.restaurant.orderManagement.model.enums.MealType;
+
 import java.io.Serializable;
 
 /**
@@ -7,11 +11,11 @@ import java.io.Serializable;
  */
 public abstract class Food implements Serializable
 {
-    protected static final double BASE_PRICE = 11.50;
-    protected double price;
+    public static final double BASE_PRICE = 11.50;
+    public double price;
 
     /**
-     * Default constructor for Food
+     * Default constructor for com.restaurant.orderManagement.model.entity.Food
      */
     public Food()
     {
@@ -26,7 +30,7 @@ public abstract class Food implements Serializable
 
     /**
      * Abstract method to determine the meal type of the food item
-     * @return the meal type as a MealType enum
+     * @return the meal type as a com.restaurant.orderManagement.model.enums.MealType enum
      */
     public abstract MealType getMealType();
 

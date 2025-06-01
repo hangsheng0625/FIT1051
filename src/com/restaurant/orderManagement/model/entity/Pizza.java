@@ -1,3 +1,8 @@
+package com.restaurant.orderManagement.model.entity;
+
+import com.restaurant.orderManagement.model.enums.MealType;
+import com.restaurant.orderManagement.model.enums.PizzaTopping;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +16,7 @@ public class Pizza extends Food
     private List<PizzaTopping> toppings;
 
     /**
-     * Default constructor for Pizza with no toppings
+     * Default constructor for com.restaurant.orderManagement.model.entity.Pizza with no toppings
      */
     public Pizza()
     {
@@ -21,7 +26,7 @@ public class Pizza extends Food
     }
 
     /**
-     * Constructor for Pizza with specified toppings
+     * Constructor for com.restaurant.orderManagement.model.entity.Pizza with specified toppings
      * @param toppings list of pizza toppings
      */
     public Pizza(List<PizzaTopping> toppings)
@@ -48,7 +53,7 @@ public class Pizza extends Food
     @Override
     public double calculatePrice()
     {
-        double totalPrice = BASE_PRICE;
+        double totalPrice = Food.BASE_PRICE;
         for (PizzaTopping topping : toppings)
         {
             totalPrice += topping.getPrice();
@@ -58,7 +63,7 @@ public class Pizza extends Food
 
     /**
      * Determines the meal type based on toppings
-     * @return the meal type as a MealType enum
+     * @return the meal type as a com.restaurant.orderManagement.model.enums.MealType enum
      */
     @Override
     public MealType getMealType()
@@ -124,7 +129,7 @@ public class Pizza extends Food
     @Override
     public String toString()
     {
-        StringBuilder description = new StringBuilder("Pizza");
+        StringBuilder description = new StringBuilder("com.restaurant.orderManagement.model.entity.Pizza");
         if (toppings.isEmpty())
         {
             description.append(" (Plain)");

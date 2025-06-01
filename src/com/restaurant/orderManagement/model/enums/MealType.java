@@ -1,3 +1,5 @@
+package com.restaurant.orderManagement.model.enums;
+
 /**
  * Enum representing the meal types based on dietary restrictions
  * Author: Student

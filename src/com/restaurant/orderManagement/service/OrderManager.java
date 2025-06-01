@@ -1,8 +1,11 @@
+package com.restaurant.orderManagement.service;
+
+import com.restaurant.orderManagement.model.entity.*;
+import com.restaurant.orderManagement.model.enums.*;
 import java.io.*;
 import java.util.*;
-
 /**
- * Main class for managing takeaway orders with queue management and file persistence
+ * com.restaurant.orderManagement.main.Main class for managing takeaway orders with queue management and file persistence
  * Author: Student
  * Version: 1.0
  */
@@ -14,6 +17,7 @@ public class OrderManager
     private Queue<Order> orderQueue;
     private Map<String, List<Order>> customerHistory;
     private Scanner scanner;
+    private FoodFactory foodFactory;
 
     /**
      * Default constructor for OrderManager
@@ -23,6 +27,7 @@ public class OrderManager
         this.orderQueue = new LinkedList<Order>();
         this.customerHistory = new HashMap<String, List<Order>>();
         this.scanner = new Scanner(System.in);
+        this.foodFactory = new RestaurantFoodFactory();
         loadOrdersFromFile();
         loadCustomerHistoryFromFile();
     }
@@ -48,7 +53,7 @@ public class OrderManager
      */
     private void createOrder()
     {
-        System.out.println("\n=== Create New Order ===");
+        System.out.println("\n=== Create New com.restaurant.orderManagement.model.entity.Order ===");
 
         String customerName = getValidatedInput("Enter customer name: ", "Customer name");
         String contactNumber = getValidatedContactNumber();
@@ -73,7 +78,7 @@ public class OrderManager
                 case 3:
                     if (order.getFoodItems().isEmpty())
                     {
-                        System.out.println("Error: Order must contain at least one food item.");
+                        System.out.println("Error: com.restaurant.orderManagement.model.entity.Order must contain at least one food item.");
                         continue;
                     }
                     addingItems = false;
@@ -88,7 +93,7 @@ public class OrderManager
                 {
                     if (order.getFoodItems().isEmpty())
                     {
-                        System.out.println("Error: Order must contain at least one food item.");
+                        System.out.println("Error: com.restaurant.orderManagement.model.entity.Order must contain at least one food item.");
                         addingItems = true;
                     }
                     else
@@ -100,7 +105,71 @@ public class OrderManager
         }
 
         addOrder(order);
-        System.out.println("\nOrder created successfully!");
+        System.out.println("\ncom.restaurant.orderManagement.model.entity.Order created successfully!");
+        System.out.println(order.toString());
+    }
+
+    /**
+     * Creates a quick order using pre-defined menu items from the factory
+     */
+    private void createQuickOrder()
+    {
+        System.out.println("\n=== Quick com.restaurant.orderManagement.model.entity.Order from Menu ===");
+
+        String customerName = getValidatedInput("Enter customer name: ", "Customer name");
+        String contactNumber = getValidatedContactNumber();
+        String deliveryAddress = getValidatedInput("Enter delivery address: ", "Delivery address");
+
+        Order order = new Order(customerName, contactNumber, deliveryAddress);
+
+        boolean addingItems = true;
+        while (addingItems)
+        {
+            displayMenuItems();
+            System.out.println((foodFactory.getAvailableMenuItems().length + 1) + ". Finish adding items");
+
+            int choice = getValidatedMenuChoice(1, foodFactory.getAvailableMenuItems().length + 1);
+
+            if (choice == foodFactory.getAvailableMenuItems().length + 1)
+            {
+                if (order.getFoodItems().isEmpty())
+                {
+                    System.out.println("Error: com.restaurant.orderManagement.model.entity.Order must contain at least one food item.");
+                    continue;
+                }
+                addingItems = false;
+            }
+            else
+            {
+                String[] menuItems = foodFactory.getAvailableMenuItems();
+                String selectedItem = menuItems[choice - 1];
+
+                try
+                {
+                    Food menuItem = foodFactory.createMenuItemByName(selectedItem);
+                    order.addFoodItem(menuItem);
+                    System.out.println("Added: " + menuItem.toString());
+                }
+                catch (IllegalArgumentException e)
+                {
+                    System.out.println("Error creating menu item: " + e.getMessage());
+                    continue;
+                }
+
+                if (addingItems)
+                {
+                    System.out.print("Add another item? (y/n): ");
+                    String response = scanner.nextLine().trim().toLowerCase();
+                    if (!response.equals("y") && !response.equals("yes"))
+                    {
+                        addingItems = false;
+                    }
+                }
+            }
+        }
+
+        addOrder(order);
+        System.out.println("\nQuick order created successfully!");
         System.out.println(order.toString());
     }
 
@@ -110,7 +179,78 @@ public class OrderManager
      */
     private void addPastaToOrder(Order order)
     {
-        System.out.println("\nPasta Toppings:");
+        System.out.println("\ncom.restaurant.orderManagement.model.entity.Pasta Options:");
+        System.out.println("1. Popular com.restaurant.orderManagement.model.entity.Pasta Dishes");
+        System.out.println("2. Custom com.restaurant.orderManagement.model.entity.Pasta (choose your topping)");
+
+        int choice = getValidatedMenuChoice(1, 2);
+
+        if (choice == 1)
+        {
+            addPopularPastaToOrder(order);
+        }
+        else
+        {
+            addCustomPastaToOrder(order);
+        }
+    }
+
+    /**
+     * Adds a popular pasta dish using the factory
+     * @param order the order to add the pasta to
+     */
+    private void addPopularPastaToOrder(Order order)
+    {
+        System.out.println("\nPopular com.restaurant.orderManagement.model.entity.Pasta Dishes:");
+
+        // Show only pasta items from the factory
+        String[] allMenuItems = foodFactory.getAvailableMenuItems();
+        List<String> pastaItems = new ArrayList<>();
+
+        for (String item : allMenuItems)
+        {
+            if (item.contains("pasta"))
+            {
+                pastaItems.add(item);
+            }
+        }
+
+        for (int i = 0; i < pastaItems.size(); i++)
+        {
+            String displayName = formatMenuItemName(pastaItems.get(i));
+            try
+            {
+                Food samplePasta = foodFactory.createMenuItemByName(pastaItems.get(i));
+                System.out.printf("%d. %s - $%.2f%n", (i + 1), displayName, samplePasta.getPrice());
+            }
+            catch (IllegalArgumentException e)
+            {
+                System.out.printf("%d. %s%n", (i + 1), displayName);
+            }
+        }
+
+        int choice = getValidatedMenuChoice(1, pastaItems.size());
+        String selectedPasta = pastaItems.get(choice - 1);
+
+        try
+        {
+            Food pasta = foodFactory.createMenuItemByName(selectedPasta);
+            order.addFoodItem(pasta);
+            System.out.println("Added: " + pasta.toString());
+        }
+        catch (IllegalArgumentException e)
+        {
+            System.out.println("Error creating pasta: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Adds a custom pasta with user-selected topping
+     * @param order the order to add the pasta to
+     */
+    private void addCustomPastaToOrder(Order order)
+    {
+        System.out.println("\nCustom com.restaurant.orderManagement.model.entity.Pasta Toppings:");
         System.out.println("1. Plain pasta (vegan) - $" + String.format("%.2f", Food.BASE_PRICE));
 
         PastaTopping[] toppings = PastaTopping.values();
@@ -142,11 +282,82 @@ public class OrderManager
      */
     private void addPizzaToOrder(Order order)
     {
-        System.out.println("\nPizza Toppings (select multiple by entering numbers separated by spaces):");
-        System.out.println("1. Plain pizza (no toppings) - $" + String.format("%.2f", Food.BASE_PRICE));
+        System.out.println("\ncom.restaurant.orderManagement.model.entity.Pizza Options:");
+        System.out.println("1. Popular com.restaurant.orderManagement.model.entity.Pizza Combinations");
+        System.out.println("2. Custom com.restaurant.orderManagement.model.entity.Pizza (build your own)");
+
+        int choice = getValidatedMenuChoice(1, 2);
+
+        if (choice == 1)
+        {
+            addPopularPizzaToOrder(order);
+        }
+        else
+        {
+            addCustomPizzaToOrder(order);
+        }
+    }
+
+    /**
+     * Adds a popular pizza combination using the factory
+     * @param order the order to add the pizza to
+     */
+    private void addPopularPizzaToOrder(Order order)
+    {
+        System.out.println("\nPopular com.restaurant.orderManagement.model.entity.Pizza Combinations:");
+
+        // Show only pizza items from the factory
+        String[] allMenuItems = foodFactory.getAvailableMenuItems();
+        List<String> pizzaItems = new ArrayList<>();
+
+        for (String item : allMenuItems)
+        {
+            if (item.contains("pizza"))
+            {
+                pizzaItems.add(item);
+            }
+        }
+
+        for (int i = 0; i < pizzaItems.size(); i++)
+        {
+            String displayName = formatMenuItemName(pizzaItems.get(i));
+            try
+            {
+                Food samplePizza = foodFactory.createMenuItemByName(pizzaItems.get(i));
+                System.out.printf("%d. %s - $%.2f%n", (i + 1), displayName, samplePizza.getPrice());
+            }
+            catch (IllegalArgumentException e)
+            {
+                System.out.printf("%d. %s%n", (i + 1), displayName);
+            }
+        }
+
+        int choice = getValidatedMenuChoice(1, pizzaItems.size());
+        String selectedPizza = pizzaItems.get(choice - 1);
+
+        try
+        {
+            Food pizza = foodFactory.createMenuItemByName(selectedPizza);
+            order.addFoodItem(pizza);
+            System.out.println("Added: " + pizza.toString());
+        }
+        catch (IllegalArgumentException e)
+        {
+            System.out.println("Error creating pizza: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Adds a custom pizza with user-selected toppings
+     * @param order the order to add the pizza to
+     */
+    private void addCustomPizzaToOrder(Order order)
+    {
+        System.out.println("\nCustom com.restaurant.orderManagement.model.entity.Pizza Toppings (select multiple by entering numbers separated by spaces):");
+        System.out.println("0. Plain pizza (no toppings) - $" + String.format("%.2f", Food.BASE_PRICE));
 
         PizzaTopping[] toppings = PizzaTopping.values();
-        for (int i = 1; i < toppings.length; i++)
+        for (int i = 0; i < toppings.length; i++)
         {
             System.out.println((i + 1) + ". " + toppings[i].toString().toLowerCase() +
                     " - $" + String.format("%.2f", toppings[i].getPrice()) + " extra");
@@ -205,7 +416,7 @@ public class OrderManager
         }
 
         Order deliveredOrder = orderQueue.poll();
-        System.out.println("\n=== Order Delivered ===");
+        System.out.println("\n=== com.restaurant.orderManagement.model.entity.Order Delivered ===");
         System.out.println(deliveredOrder.toString());
 
         saveOrdersToFile();
@@ -217,10 +428,61 @@ public class OrderManager
     private void displayFoodMenu()
     {
         System.out.println("\nSelect food item:");
-        System.out.println("1. Pizza");
-        System.out.println("2. Pasta");
+        System.out.println("1. com.restaurant.orderManagement.model.entity.Pizza");
+        System.out.println("2. com.restaurant.orderManagement.model.entity.Pasta");
         System.out.println("3. Finish adding items");
         System.out.print("Enter choice: ");
+    }
+
+    /**
+     * Displays pre-defined menu items from the factory
+     */
+    private void displayMenuItems()
+    {
+        System.out.println("\nSelect from our menu:");
+        String[] menuItems = foodFactory.getAvailableMenuItems();
+
+        for (int i = 0; i < menuItems.length; i++)
+        {
+            String displayName = formatMenuItemName(menuItems[i]);
+
+            // Create a sample item to show price
+            try
+            {
+                Food sampleItem = foodFactory.createMenuItemByName(menuItems[i]);
+                System.out.printf("%d. %s - $%.2f%n", (i + 1), displayName, sampleItem.getPrice());
+            }
+            catch (IllegalArgumentException e)
+            {
+                System.out.printf("%d. %s%n", (i + 1), displayName);
+            }
+        }
+
+        System.out.print("Enter choice: ");
+    }
+
+    /**
+     * Formats menu item names for display
+     * @param menuItemName the internal menu item name
+     * @return formatted display name
+     */
+    private String formatMenuItemName(String menuItemName)
+    {
+        // Convert snake_case to Title Case
+        String[] words = menuItemName.split("_");
+        StringBuilder formatted = new StringBuilder();
+
+        for (int i = 0; i < words.length; i++)
+        {
+            if (i > 0)
+            {
+                formatted.append(" ");
+            }
+            formatted.append(words[i].substring(0, 1).toUpperCase())
+                    .append(words[i].substring(1).toLowerCase());
+        }
+
+        return formatted.toString();
     }
 
     /**
@@ -228,15 +490,16 @@ public class OrderManager
      */
     private void displayMainMenu()
     {
-        System.out.println("\n=== Takeaway Order Management System ===");
+        System.out.println("\n=== Takeaway com.restaurant.orderManagement.model.entity.Order Management System ===");
         System.out.println("1. Enter the details of a customer order");
-        System.out.println("2. Deliver an order");
-        System.out.println("3. Print out details of all orders");
-        System.out.println("4. Search orders by customer name");
-        System.out.println("5. View customer order history");
-        System.out.println("6. Filter orders by meal type");
-        System.out.println("7. Export orders to text file");
-        System.out.println("8. Exit the program");
+        System.out.println("2. Quick order from menu");
+        System.out.println("3. Deliver an order");
+        System.out.println("4. Print out details of all orders");
+        System.out.println("5. Search orders by customer name");
+        System.out.println("6. View customer order history");
+        System.out.println("7. Filter orders by meal type");
+        System.out.println("8. Export orders to text file");
+        System.out.println("9. Exit the program");
         System.out.print("Enter your choice: ");
     }
 
@@ -255,7 +518,7 @@ public class OrderManager
             int orderNumber = 1;
             for (Order order : orderQueue)
             {
-                writer.println("\nOrder #" + orderNumber++);
+                writer.println("\ncom.restaurant.orderManagement.model.entity.Order #" + orderNumber++);
                 writer.println(order.toString());
                 writer.println("-".repeat(30));
             }
@@ -308,7 +571,7 @@ public class OrderManager
         {
             if (order.getMealType() == selectedType)
             {
-                System.out.println("\nOrder #" + (++count));
+                System.out.println("\ncom.restaurant.orderManagement.model.entity.Order #" + (++count));
                 System.out.println(order.toString());
                 System.out.println("-".repeat(30));
             }
@@ -459,7 +722,7 @@ public class OrderManager
         int orderNumber = 1;
         for (Order order : orderQueue)
         {
-            System.out.println("\nOrder #" + orderNumber++);
+            System.out.println("\ncom.restaurant.orderManagement.model.entity.Order #" + orderNumber++);
             System.out.println(order.toString());
             System.out.println("-".repeat(30));
         }
@@ -468,16 +731,16 @@ public class OrderManager
     }
 
     /**
-     * Main program loop
+     * com.restaurant.orderManagement.main.Main program loop
      */
     public void run()
     {
-        System.out.println("Welcome to the Takeaway Order Management System!");
+        System.out.println("Welcome to the Takeaway com.restaurant.orderManagement.model.entity.Order Management System!");
 
         while (true)
         {
             displayMainMenu();
-            int choice = getValidatedMenuChoice(1, 8);
+            int choice = getValidatedMenuChoice(1, 9);
 
             switch (choice)
             {
@@ -485,27 +748,30 @@ public class OrderManager
                     createOrder();
                     break;
                 case 2:
-                    deliverOrder();
+                    createQuickOrder();
                     break;
                 case 3:
-                    printAllOrders();
+                    deliverOrder();
                     break;
                 case 4:
-                    searchOrdersByCustomer();
+                    printAllOrders();
                     break;
                 case 5:
-                    viewCustomerHistory();
+                    searchOrdersByCustomer();
                     break;
                 case 6:
-                    filterOrdersByMealType();
+                    viewCustomerHistory();
                     break;
                 case 7:
-                    exportOrdersToFile();
+                    filterOrdersByMealType();
                     break;
                 case 8:
+                    exportOrdersToFile();
+                    break;
+                case 9:
                     saveOrdersToFile();
                     saveCustomerHistoryToFile();
-                    System.out.println("Thank you for using the Order Management System!");
+                    System.out.println("Thank you for using the com.restaurant.orderManagement.model.entity.Order Management System!");
                     return;
             }
         }
@@ -560,7 +826,7 @@ public class OrderManager
         {
             if (order.getCustomerName().toLowerCase().contains(searchName))
             {
-                System.out.println("\nOrder #" + (++count));
+                System.out.println("\ncom.restaurant.orderManagement.model.entity.Order #" + (++count));
                 System.out.println(order.toString());
                 System.out.println("-".repeat(30));
             }
@@ -588,12 +854,12 @@ public class OrderManager
         if (customerHistory.containsKey(customerName))
         {
             List<Order> history = customerHistory.get(customerName);
-            System.out.println("\n=== Order History for " + customerName + " ===");
+            System.out.println("\n=== com.restaurant.orderManagement.model.entity.Order History for " + customerName + " ===");
             System.out.println("Total orders: " + history.size());
 
             for (int i = 0; i < history.size(); i++)
             {
-                System.out.println("\nHistorical Order #" + (i + 1));
+                System.out.println("\nHistorical com.restaurant.orderManagement.model.entity.Order #" + (i + 1));
                 System.out.println(history.get(i).toString());
                 System.out.println("-".repeat(30));
             }

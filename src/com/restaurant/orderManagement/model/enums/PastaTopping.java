@@ -1,3 +1,5 @@
+package com.restaurant.orderManagement.model.enums;
+
 /**
  * Enum representing the available pasta toppings with their prices and dietary information
  * Author: Student
@@ -15,7 +17,7 @@ public enum PastaTopping
     private final boolean isVegan;
 
     /**
-     * Constructor for PastaTopping enum
+     * Constructor for com.restaurant.orderManagement.model.enums.PastaTopping enum
      * @param price the additional cost of this topping
      * @param isVegetarian whether this topping is vegetarian
      * @param isVegan whether this topping is vegan

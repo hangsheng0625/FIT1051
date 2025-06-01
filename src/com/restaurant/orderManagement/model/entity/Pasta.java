@@ -1,3 +1,8 @@
+package com.restaurant.orderManagement.model.entity;
+
+import com.restaurant.orderManagement.model.enums.MealType;
+import com.restaurant.orderManagement.model.enums.PastaTopping;
+
 /**
  * Class representing a pasta with a single topping, price calculation and meal type determination
  * Author: Student
@@ -8,7 +13,7 @@ public class Pasta extends Food
     private PastaTopping topping;
 
     /**
-     * Default constructor for Pasta with no topping (plain pasta)
+     * Default constructor for com.restaurant.orderManagement.model.entity.Pasta with no topping (plain pasta)
      */
     public Pasta()
     {
@@ -18,7 +23,7 @@ public class Pasta extends Food
     }
 
     /**
-     * Constructor for Pasta with specified topping
+     * Constructor for com.restaurant.orderManagement.model.entity.Pasta with specified topping
      * @param topping the pasta topping
      */
     public Pasta(PastaTopping topping)
@@ -35,7 +40,7 @@ public class Pasta extends Food
     @Override
     public double calculatePrice()
     {
-        double totalPrice = BASE_PRICE;
+        double totalPrice = Food.BASE_PRICE;
         if (topping != null)
         {
             totalPrice += topping.getPrice();
@@ -45,7 +50,7 @@ public class Pasta extends Food
 
     /**
      * Determines the meal type based on topping
-     * @return the meal type as a MealType enum
+     * @return the meal type as a com.restaurant.orderManagement.model.enums.MealType enum
      */
     @Override
     public MealType getMealType()
@@ -95,7 +100,7 @@ public class Pasta extends Food
     @Override
     public String toString()
     {
-        StringBuilder description = new StringBuilder("Pasta");
+        StringBuilder description = new StringBuilder("com.restaurant.orderManagement.model.entity.Pasta");
         if (topping == null)
         {
             description.append(" (Plain)");
