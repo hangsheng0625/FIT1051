@@ -5,7 +5,7 @@ import com.restaurant.orderManagement.model.enums.PastaTopping;
 
 /**
  * Class representing a pasta with a single topping, price calculation and meal type determination
- * Author: Student
+ * Author: Liaw Hang Sheng
  * Version: 1.0
  */
 public class Pasta extends Food
@@ -13,7 +13,7 @@ public class Pasta extends Food
     private PastaTopping topping;
 
     /**
-     * Default constructor for com.restaurant.orderManagement.model.entity.Pasta with no topping (plain pasta)
+     * Default constructor for Pasta with no topping (plain pasta)
      */
     public Pasta()
     {
@@ -23,7 +23,7 @@ public class Pasta extends Food
     }
 
     /**
-     * Constructor for com.restaurant.orderManagement.model.entity.Pasta with specified topping
+     * Constructor for Pasta with specified topping
      * @param topping the pasta topping
      */
     public Pasta(PastaTopping topping)
@@ -50,7 +50,7 @@ public class Pasta extends Food
 
     /**
      * Determines the meal type based on topping
-     * @return the meal type as a com.restaurant.orderManagement.model.enums.MealType enum
+     * @return the meal type as a MealType enum
      */
     @Override
     public MealType getMealType()

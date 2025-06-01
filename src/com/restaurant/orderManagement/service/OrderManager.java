@@ -5,8 +5,8 @@ import com.restaurant.orderManagement.model.enums.*;
 import java.io.*;
 import java.util.*;
 /**
- * com.restaurant.orderManagement.main.Main class for managing takeaway orders with queue management and file persistence
- * Author: Student
+ * Main class for managing takeaway orders with queue management and file persistence
+ * Author: Liaw Hang Sheng
  * Version: 1.0
  */
 public class OrderManager
@@ -46,6 +46,243 @@ public class OrderManager
 
         saveOrdersToFile();
         saveCustomerHistoryToFile();
+    }
+
+    /**
+     * Adds a custom pasta with user-selected topping
+     * @param order the order to add the pasta to
+     */
+    private void addCustomPastaToOrder(Order order)
+    {
+        System.out.println("\nCustom Pasta Toppings:");
+        System.out.println("1. Plain pasta (vegan) - $" + String.format("%.2f", Food.getBasePrice()));
+
+        PastaTopping[] toppings = PastaTopping.values();
+        for (int i = 0; i < toppings.length; i++)
+        {
+            System.out.println((i + 2) + ". " + toppings[i].toString().toLowerCase() +
+                    " - $" + String.format("%.2f", Food.getBasePrice() + toppings[i].getPrice()));
+        }
+
+        int choice = getValidatedMenuChoice(1, toppings.length + 1);
+
+        Pasta pasta;
+        if (choice == 1)
+        {
+            pasta = new Pasta();
+        }
+        else
+        {
+            pasta = new Pasta(toppings[choice - 2]);
+        }
+
+        order.addFoodItem(pasta);
+        System.out.println("Added: " + pasta.toString());
+    }
+
+    /**
+     * Adds a custom pizza with user-selected toppings
+     * @param order the order to add the pizza to
+     */
+    private void addCustomPizzaToOrder(Order order)
+    {
+        System.out.println("\nCustom Pizza Toppings (select multiple by entering numbers separated by spaces):");
+        System.out.println("0. Plain pizza (no toppings) - $" + String.format("%.2f", Food.getBasePrice()));
+
+        PizzaTopping[] toppings = PizzaTopping.values();
+        for (int i = 0; i < toppings.length; i++)
+        {
+            System.out.println((i + 1) + ". " + toppings[i].toString().toLowerCase() +
+                    " - $" + String.format("%.2f", toppings[i].getPrice()) + " extra");
+        }
+
+        System.out.print("Enter your choices (e.g., '1 3 5' or '0' for plain): ");
+        String input = scanner.nextLine().trim();
+
+        List<PizzaTopping> selectedToppings = new ArrayList<PizzaTopping>();
+
+        if (!input.equals("0"))
+        {
+            try
+            {
+                String[] choices = input.split("\\s+");
+                Set<Integer> uniqueChoices = new HashSet<Integer>();
+
+                for (String choice : choices)
+                {
+                    int toppingIndex = Integer.parseInt(choice) - 1;
+                    if (toppingIndex >= 0 && toppingIndex < toppings.length)
+                    {
+                        uniqueChoices.add(toppingIndex);
+                    }
+                    else
+                    {
+                        throw new NumberFormatException("Invalid topping number: " + (toppingIndex + 1));
+                    }
+                }
+
+                for (int index : uniqueChoices)
+                {
+                    selectedToppings.add(toppings[index]);
+                }
+            }
+            catch (NumberFormatException e)
+            {
+                System.out.println("Invalid input. Creating plain pizza.");
+            }
+        }
+
+        Pizza pizza = new Pizza(selectedToppings);
+        order.addFoodItem(pizza);
+        System.out.println("Added: " + pizza.toString());
+    }
+
+    /**
+     * Adds a pasta item to the order based on user input
+     * @param order the order to add the pasta to
+     */
+    private void addPastaToOrder(Order order)
+    {
+        System.out.println("\nPasta Options:");
+        System.out.println("1. Popular Pasta Dishes");
+        System.out.println("2. Custom Pasta (choose your topping)");
+
+        int choice = getValidatedMenuChoice(1, 2);
+
+        if (choice == 1)
+        {
+            addPopularPastaToOrder(order);
+        }
+        else
+        {
+            addCustomPastaToOrder(order);
+        }
+    }
+
+    /**
+     * Adds a pizza item to the order based on user input
+     * @param order the order to add the pizza to
+     */
+    private void addPizzaToOrder(Order order)
+    {
+        System.out.println("\nPizza Options:");
+        System.out.println("1. Popular Pizza Combinations");
+        System.out.println("2. Custom Pizza (build your own)");
+
+        int choice = getValidatedMenuChoice(1, 2);
+
+        if (choice == 1)
+        {
+            addPopularPizzaToOrder(order);
+        }
+        else
+        {
+            addCustomPizzaToOrder(order);
+        }
+    }
+
+    /**
+     * Adds a popular pasta dish using the factory
+     * @param order the order to add the pasta to
+     */
+    private void addPopularPastaToOrder(Order order)
+    {
+        System.out.println("\nPopular Pasta Dishes:");
+
+        // Show only pasta items from the factory
+        String[] allMenuItems = foodFactory.getAvailableMenuItems();
+        List<String> pastaItems = new ArrayList<>();
+
+        for (String item : allMenuItems)
+        {
+            if (item.contains("pasta"))
+            {
+                pastaItems.add(item);
+            }
+        }
+
+        for (int i = 0; i < pastaItems.size(); i++)
+        {
+            String displayName = formatMenuItemName(pastaItems.get(i));
+            String description = foodFactory.getMenuItemDescription(pastaItems.get(i));
+
+            try
+            {
+                Food samplePasta = foodFactory.createMenuItemByName(pastaItems.get(i));
+                System.out.printf("%d. %s (%s) - $%.2f%n",
+                        (i + 1), displayName, description, samplePasta.getPrice());
+            }
+            catch (IllegalArgumentException e)
+            {
+                System.out.printf("%d. %s (%s)%n", (i + 1), displayName, description);
+            }
+        }
+
+        int choice = getValidatedMenuChoice(1, pastaItems.size());
+        String selectedPasta = pastaItems.get(choice - 1);
+
+        try
+        {
+            Food pasta = foodFactory.createMenuItemByName(selectedPasta);
+            order.addFoodItem(pasta);
+            System.out.println("Added: " + pasta.toString());
+        }
+        catch (IllegalArgumentException e)
+        {
+            System.out.println("Error creating pasta: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Adds a popular pizza combination using the factory
+     * @param order the order to add the pizza to
+     */
+    private void addPopularPizzaToOrder(Order order)
+    {
+        System.out.println("\nPopular Pizza Combinations:");
+
+        // Show only pizza items from the factory
+        String[] allMenuItems = foodFactory.getAvailableMenuItems();
+        List<String> pizzaItems = new ArrayList<>();
+
+        for (String item : allMenuItems)
+        {
+            if (item.contains("pizza"))
+            {
+                pizzaItems.add(item);
+            }
+        }
+
+        for (int i = 0; i < pizzaItems.size(); i++)
+        {
+            String displayName = formatMenuItemName(pizzaItems.get(i));
+            String description = foodFactory.getMenuItemDescription(pizzaItems.get(i));
+
+            try
+            {
+                Food samplePizza = foodFactory.createMenuItemByName(pizzaItems.get(i));
+                System.out.printf("%d. %s (%s) - $%.2f%n",
+                        (i + 1), displayName, description, samplePizza.getPrice());
+            }
+            catch (IllegalArgumentException e)
+            {
+                System.out.printf("%d. %s (%s)%n", (i + 1), displayName, description);
+            }
+        }
+
+        int choice = getValidatedMenuChoice(1, pizzaItems.size());
+        String selectedPizza = pizzaItems.get(choice - 1);
+
+        try
+        {
+            Food pizza = foodFactory.createMenuItemByName(selectedPizza);
+            order.addFoodItem(pizza);
+            System.out.println("Added: " + pizza.toString());
+        }
+        catch (IllegalArgumentException e)
+        {
+            System.out.println("Error creating pizza: " + e.getMessage());
+        }
     }
 
     /**
@@ -174,235 +411,6 @@ public class OrderManager
     }
 
     /**
-     * Adds a pasta item to the order based on user input
-     * @param order the order to add the pasta to
-     */
-    private void addPastaToOrder(Order order)
-    {
-        System.out.println("\nPasta Options:");
-        System.out.println("1. Popular Pasta Dishes");
-        System.out.println("2. Custom Pasta (choose your topping)");
-
-        int choice = getValidatedMenuChoice(1, 2);
-
-        if (choice == 1)
-        {
-            addPopularPastaToOrder(order);
-        }
-        else
-        {
-            addCustomPastaToOrder(order);
-        }
-    }
-
-    /**
-     * Adds a popular pasta dish using the factory
-     * @param order the order to add the pasta to
-     */
-    private void addPopularPastaToOrder(Order order)
-    {
-        System.out.println("\nPopular Pasta Dishes:");
-
-        // Show only pasta items from the factory
-        String[] allMenuItems = foodFactory.getAvailableMenuItems();
-        List<String> pastaItems = new ArrayList<>();
-
-        for (String item : allMenuItems)
-        {
-            if (item.contains("pasta"))
-            {
-                pastaItems.add(item);
-            }
-        }
-
-        for (int i = 0; i < pastaItems.size(); i++) {
-            String displayName = formatMenuItemName(pastaItems.get(i));
-            String description = foodFactory.getMenuItemDescription(pastaItems.get(i));
-
-            try {
-                Food samplePizza = foodFactory.createMenuItemByName(pastaItems.get(i));
-                System.out.printf("%d. %s (%s) - $%.2f%n",
-                        (i + 1), displayName, description, samplePizza.getPrice());
-            } catch (IllegalArgumentException e) {
-                System.out.printf("%d. %s (%s)%n", (i + 1), displayName, description);
-            }
-        }
-
-        int choice = getValidatedMenuChoice(1, pastaItems.size());
-        String selectedPasta = pastaItems.get(choice - 1);
-
-        try
-        {
-            Food pasta = foodFactory.createMenuItemByName(selectedPasta);
-            order.addFoodItem(pasta);
-            System.out.println("Added: " + pasta.toString());
-        }
-        catch (IllegalArgumentException e)
-        {
-            System.out.println("Error creating pasta: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Adds a custom pasta with user-selected topping
-     * @param order the order to add the pasta to
-     */
-    private void addCustomPastaToOrder(Order order)
-    {
-        System.out.println("\nCustom Pasta Toppings:");
-        System.out.println("1. Plain pasta (vegan) - $" + String.format("%.2f", Food.getBasePrice()));
-
-        PastaTopping[] toppings = PastaTopping.values();
-        for (int i = 0; i < toppings.length; i++)
-        {
-            System.out.println((i + 2) + ". " + toppings[i].toString().toLowerCase() +
-                    " - $" + String.format("%.2f", Food.getBasePrice() + toppings[i].getPrice()));
-        }
-
-        int choice = getValidatedMenuChoice(1, toppings.length + 1);
-
-        Pasta pasta;
-        if (choice == 1)
-        {
-            pasta = new Pasta();
-        }
-        else
-        {
-            pasta = new Pasta(toppings[choice - 2]);
-        }
-
-        order.addFoodItem(pasta);
-        System.out.println("Added: " + pasta.toString());
-    }
-
-    /**
-     * Adds a pizza item to the order based on user input
-     * @param order the order to add the pizza to
-     */
-    private void addPizzaToOrder(Order order)
-    {
-        System.out.println("\nPizza Options:");
-        System.out.println("1. Popular Pizza Combinations");
-        System.out.println("2. Custom Pizza (build your own)");
-
-        int choice = getValidatedMenuChoice(1, 2);
-
-        if (choice == 1)
-        {
-            addPopularPizzaToOrder(order);
-        }
-        else
-        {
-            addCustomPizzaToOrder(order);
-        }
-    }
-
-    /**
-     * Adds a popular pizza combination using the factory
-     * @param order the order to add the pizza to
-     */
-    private void addPopularPizzaToOrder(Order order)
-    {
-        System.out.println("\nPopular Pizza Combinations:");
-
-        // Show only pizza items from the factory
-        String[] allMenuItems = foodFactory.getAvailableMenuItems();
-        List<String> pizzaItems = new ArrayList<>();
-
-        for (String item : allMenuItems)
-        {
-            if (item.contains("pizza"))
-            {
-                pizzaItems.add(item);
-            }
-        }
-
-        for (int i = 0; i < pizzaItems.size(); i++) {
-            String displayName = formatMenuItemName(pizzaItems.get(i));
-            String description = foodFactory.getMenuItemDescription(pizzaItems.get(i));
-
-            try {
-                Food samplePizza = foodFactory.createMenuItemByName(pizzaItems.get(i));
-                System.out.printf("%d. %s (%s) - $%.2f%n",
-                        (i + 1), displayName, description, samplePizza.getPrice());
-            } catch (IllegalArgumentException e) {
-                System.out.printf("%d. %s (%s)%n", (i + 1), displayName, description);
-            }
-        }
-
-        int choice = getValidatedMenuChoice(1, pizzaItems.size());
-        String selectedPizza = pizzaItems.get(choice - 1);
-
-        try
-        {
-            Food pizza = foodFactory.createMenuItemByName(selectedPizza);
-            order.addFoodItem(pizza);
-            System.out.println("Added: " + pizza.toString());
-        }
-        catch (IllegalArgumentException e)
-        {
-            System.out.println("Error creating pizza: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Adds a custom pizza with user-selected toppings
-     * @param order the order to add the pizza to
-     */
-    private void addCustomPizzaToOrder(Order order)
-    {
-        System.out.println("\nCustom Pizza Toppings (select multiple by entering numbers separated by spaces):");
-        System.out.println("0. Plain pizza (no toppings) - $" + String.format("%.2f", Food.getBasePrice()));
-
-        PizzaTopping[] toppings = PizzaTopping.values();
-        for (int i = 0; i < toppings.length; i++)
-        {
-            System.out.println((i + 1) + ". " + toppings[i].toString().toLowerCase() +
-                    " - $" + String.format("%.2f", toppings[i].getPrice()) + " extra");
-        }
-
-        System.out.print("Enter your choices (e.g., '1 3 5' or '0' for plain): ");
-        String input = scanner.nextLine().trim();
-
-        List<PizzaTopping> selectedToppings = new ArrayList<PizzaTopping>();
-
-        if (!input.equals("0"))
-        {
-            try
-            {
-                String[] choices = input.split("\\s+");
-                Set<Integer> uniqueChoices = new HashSet<Integer>();
-
-                for (String choice : choices)
-                {
-                    int toppingIndex = Integer.parseInt(choice) - 1;
-                    if (toppingIndex >= 0 && toppingIndex < toppings.length)
-                    {
-                        uniqueChoices.add(toppingIndex);
-                    }
-                    else
-                    {
-                        throw new NumberFormatException("Invalid topping number: " + (toppingIndex + 1));
-                    }
-                }
-
-                for (int index : uniqueChoices)
-                {
-                    selectedToppings.add(toppings[index]);
-                }
-            }
-            catch (NumberFormatException e)
-            {
-                System.out.println("Invalid input. Creating plain pizza.");
-            }
-        }
-
-        Pizza pizza = new Pizza(selectedToppings);
-        order.addFoodItem(pizza);
-        System.out.println("Added: " + pizza.toString());
-    }
-
-    /**
      * Delivers the next order in the queue (FIFO)
      */
     private void deliverOrder()
@@ -433,56 +441,6 @@ public class OrderManager
     }
 
     /**
-     * Displays pre-defined menu items from the factory
-     */
-    private void displayMenuItems() {
-        System.out.println("\nSelect from our menu:");
-        String[] menuItems = foodFactory.getAvailableMenuItems();
-
-        for (int i = 0; i < menuItems.length; i++) {
-            String displayName = formatMenuItemName(menuItems[i]);
-
-            // Get description with ingredients
-            String description = foodFactory.getMenuItemDescription(menuItems[i]);
-
-            try {
-                Food sampleItem = foodFactory.createMenuItemByName(menuItems[i]);
-                // Enhanced display with ingredients!
-                System.out.printf("%d. %s (%s) - $%.2f%n",
-                        (i + 1), displayName, description, sampleItem.getPrice());
-            } catch (IllegalArgumentException e) {
-                System.out.printf("%d. %s (%s)%n", (i + 1), displayName, description);
-            }
-        }
-
-        System.out.print("Enter choice: ");
-    }
-
-    /**
-     * Formats menu item names for display
-     * @param menuItemName the internal menu item name
-     * @return formatted display name
-     */
-    private String formatMenuItemName(String menuItemName)
-    {
-        // Convert snake_case to Title Case
-        String[] words = menuItemName.split("_");
-        StringBuilder formatted = new StringBuilder();
-
-        for (int i = 0; i < words.length; i++)
-        {
-            if (i > 0)
-            {
-                formatted.append(" ");
-            }
-            formatted.append(words[i].substring(0, 1).toUpperCase())
-                    .append(words[i].substring(1).toLowerCase());
-        }
-
-        return formatted.toString();
-    }
-
-    /**
      * Displays the main menu
      */
     private void displayMainMenu()
@@ -497,6 +455,37 @@ public class OrderManager
         System.out.println("7. Filter orders by meal type");
         System.out.println("8. Exit the program");
         System.out.print("Enter your choice: ");
+    }
+
+    /**
+     * Displays pre-defined menu items from the factory
+     */
+    private void displayMenuItems()
+    {
+        System.out.println("\nSelect from our menu:");
+        String[] menuItems = foodFactory.getAvailableMenuItems();
+
+        for (int i = 0; i < menuItems.length; i++)
+        {
+            String displayName = formatMenuItemName(menuItems[i]);
+
+            // Get description with ingredients
+            String description = foodFactory.getMenuItemDescription(menuItems[i]);
+
+            try
+            {
+                Food sampleItem = foodFactory.createMenuItemByName(menuItems[i]);
+                // Enhanced display with ingredients!
+                System.out.printf("%d. %s (%s) - $%.2f%n",
+                        (i + 1), displayName, description, sampleItem.getPrice());
+            }
+            catch (IllegalArgumentException e)
+            {
+                System.out.printf("%d. %s (%s)%n", (i + 1), displayName, description);
+            }
+        }
+
+        System.out.print("Enter choice: ");
     }
 
     /**
@@ -552,6 +541,30 @@ public class OrderManager
     }
 
     /**
+     * Formats menu item names for display
+     * @param menuItemName the internal menu item name
+     * @return formatted display name
+     */
+    private String formatMenuItemName(String menuItemName)
+    {
+        // Convert snake_case to Title Case
+        String[] words = menuItemName.split("_");
+        StringBuilder formatted = new StringBuilder();
+
+        for (int i = 0; i < words.length; i++)
+        {
+            if (i > 0)
+            {
+                formatted.append(" ");
+            }
+            formatted.append(words[i].substring(0, 1).toUpperCase())
+                    .append(words[i].substring(1).toLowerCase());
+        }
+
+        return formatted.toString();
+    }
+
+    /**
      * Gets validated contact number input from user
      * @return validated contact number string
      */
@@ -604,24 +617,24 @@ public class OrderManager
 
     /**
      * Gets validated menu choice from user
-     * @param min minimum valid choice
-     * @param max maximum valid choice
+     * @param minimum minimum valid choice
+     * @param maximum maximum valid choice
      * @return validated menu choice
      */
-    private int getValidatedMenuChoice(int min, int max)
+    private int getValidatedMenuChoice(int minimum, int maximum)
     {
         while (true)
         {
             try
             {
                 int choice = Integer.parseInt(scanner.nextLine().trim());
-                if (choice >= min && choice <= max)
+                if (choice >= minimum && choice <= maximum)
                 {
                     return choice;
                 }
                 else
                 {
-                    System.out.println("Error: Please enter a number between " + min + " and " + max + ".");
+                    System.out.println("Error: Please enter a number between " + minimum + " and " + maximum + ".");
                     System.out.print("Enter choice: ");
                 }
             }
@@ -639,9 +652,9 @@ public class OrderManager
     @SuppressWarnings("unchecked")
     private void loadCustomerHistoryFromFile()
     {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(CUSTOMERS_FILE)))
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(CUSTOMERS_FILE)))
         {
-            customerHistory = (Map<String, List<Order>>) ois.readObject();
+            customerHistory = (Map<String, List<Order>>) objectInputStream.readObject();
         }
         catch (FileNotFoundException e)
         {
@@ -659,9 +672,9 @@ public class OrderManager
     @SuppressWarnings("unchecked")
     private void loadOrdersFromFile()
     {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ORDERS_FILE)))
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(ORDERS_FILE)))
         {
-            orderQueue = (Queue<Order>) ois.readObject();
+            orderQueue = (Queue<Order>) objectInputStream.readObject();
         }
         catch (FileNotFoundException e)
         {
@@ -672,8 +685,6 @@ public class OrderManager
             System.out.println("Warning: Could not load previous orders.");
         }
     }
-
-
 
     /**
      * Prints all orders in the queue
@@ -699,7 +710,7 @@ public class OrderManager
     }
 
     /**
-     * com.restaurant.orderManagement.main.Main program loop
+     * Main program loop
      */
     public void run()
     {
@@ -747,9 +758,9 @@ public class OrderManager
      */
     private void saveCustomerHistoryToFile()
     {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(CUSTOMERS_FILE)))
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(CUSTOMERS_FILE)))
         {
-            oos.writeObject(customerHistory);
+            objectOutputStream.writeObject(customerHistory);
         }
         catch (IOException e)
         {
@@ -762,9 +773,9 @@ public class OrderManager
      */
     private void saveOrdersToFile()
     {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ORDERS_FILE)))
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(ORDERS_FILE)))
         {
-            oos.writeObject(orderQueue);
+            objectOutputStream.writeObject(orderQueue);
         }
         catch (IOException e)
         {

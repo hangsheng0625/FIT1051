@@ -2,7 +2,7 @@ package com.restaurant.orderManagement.model.enums;
 
 /**
  * Enum representing the available pizza toppings with their prices
- * Author: Student
+ * Author: Liaw Hang Sheng
  * Version: 1.0
  */
 public enum PizzaTopping
@@ -19,7 +19,7 @@ public enum PizzaTopping
     private final boolean isVegan;
 
     /**
-     * Constructor for com.restaurant.orderManagement.model.enums.PizzaTopping enum
+     * Constructor for PizzaTopping enum
      * @param price the additional cost of this topping
      * @param isVegetarian whether this topping is vegetarian
      * @param isVegan whether this topping is vegan
@@ -41,6 +41,15 @@ public enum PizzaTopping
     }
 
     /**
+     * Checks if this topping is vegan
+     * @return true if vegan, false otherwise
+     */
+    public boolean isVegan()
+    {
+        return isVegan;
+    }
+
+    /**
      * Checks if this topping is vegetarian
      * @return true if vegetarian, false otherwise
      */
@@ -49,12 +58,5 @@ public enum PizzaTopping
         return isVegetarian;
     }
 
-    /**
-     * Checks if this topping is vegan
-     * @return true if vegan, false otherwise
-     */
-    public boolean isVegan()
-    {
-        return isVegan;
-    }
+
 }

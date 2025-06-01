@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * Class representing a pizza with toppings, price calculation and meal type determination
- * Author: Student
+ * Author: Liaw Hang Sheng
  * Version: 1.0
  */
 public class Pizza extends Food
@@ -16,7 +16,7 @@ public class Pizza extends Food
     private List<PizzaTopping> toppings;
 
     /**
-     * Default constructor for com.restaurant.orderManagement.model.entity.Pizza with no toppings
+     * Default constructor for Pizza with no toppings
      */
     public Pizza()
     {
@@ -26,7 +26,7 @@ public class Pizza extends Food
     }
 
     /**
-     * Constructor for com.restaurant.orderManagement.model.entity.Pizza with specified toppings
+     * Constructor for Pizza with specified toppings
      * @param toppings list of pizza toppings
      */
     public Pizza(List<PizzaTopping> toppings)
@@ -63,7 +63,7 @@ public class Pizza extends Food
 
     /**
      * Determines the meal type based on toppings
-     * @return the meal type as a com.restaurant.orderManagement.model.enums.MealType enum
+     * @return the meal type as a MealType enum
      */
     @Override
     public MealType getMealType()

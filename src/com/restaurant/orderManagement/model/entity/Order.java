@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * Class representing a customer order with food items and customer details
- * Author: Student
+ * Author: Liaw Hang Sheng
  * Version: 1.0
  */
 public class Order implements Serializable
@@ -24,7 +24,7 @@ public class Order implements Serializable
     private LocalDateTime orderTime;
 
     /**
-     * Default constructor for com.restaurant.orderManagement.model.entity.Order
+     * Default constructor for Order
      */
     public Order()
     {
@@ -38,7 +38,7 @@ public class Order implements Serializable
     }
 
     /**
-     * Constructor for com.restaurant.orderManagement.model.entity.Order with customer details
+     * Constructor for Order with customer details
      * @param customerName the customer's name
      * @param contactNumber the customer's contact number
      * @param deliveryAddress the delivery address
@@ -157,7 +157,7 @@ public class Order implements Serializable
 
     /**
      * Gets the meal type
-     * @return the meal type as a com.restaurant.orderManagement.model.enums.MealType enum
+     * @return the meal type as a MealType enum
      */
     public MealType getMealType()
     {

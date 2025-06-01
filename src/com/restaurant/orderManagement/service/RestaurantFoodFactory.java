@@ -6,7 +6,7 @@ import java.util.*;
 
 /**
  * Concrete factory implementation for creating restaurant food items
- * Author: Student
+ * Author: Liaw Hang Sheng
  * Version: 1.0
  */
 public class RestaurantFoodFactory implements FoodFactory
@@ -40,11 +40,13 @@ public class RestaurantFoodFactory implements FoodFactory
     @Override
     public Food createFood(String foodType, Map<String, Object> parameters)
     {
-        if (foodType == null) {
+        if (foodType == null)
+        {
             throw new IllegalArgumentException("Food type cannot be null");
         }
 
-        switch (foodType.toLowerCase()) {
+        switch (foodType.toLowerCase())
+        {
             case "pizza":
                 return createPizza(parameters);
             case "pasta":
@@ -62,12 +64,14 @@ public class RestaurantFoodFactory implements FoodFactory
     @Override
     public Food createMenuItemByName(String menuItemName)
     {
-        if (menuItemName == null) {
+        if (menuItemName == null)
+        {
             throw new IllegalArgumentException("Menu item name cannot be null");
         }
 
-        switch (menuItemName.toLowerCase()) {
-            // com.restaurant.orderManagement.model.entity.Pizza menu items
+        switch (menuItemName.toLowerCase())
+        {
+            // Pizza menu items
             case "hawaiian_pizza":
                 return createHawaiianPizza();
             case "meat_lovers_pizza":
@@ -79,7 +83,7 @@ public class RestaurantFoodFactory implements FoodFactory
             case "seafood_deluxe_pizza":
                 return createSeafoodDeluxePizza();
 
-            // com.restaurant.orderManagement.model.entity.Pasta menu items
+            // Pasta menu items
             case "classic_marinara_pasta":
                 return createClassicMarinaraPasta();
             case "creamy_primavera_pasta":
@@ -92,6 +96,157 @@ public class RestaurantFoodFactory implements FoodFactory
             default:
                 throw new IllegalArgumentException("Unknown menu item: " + menuItemName);
         }
+    }
+
+    /**
+     * Creates Classic Marinara pasta
+     * @return Marinara pasta
+     */
+    private Pasta createClassicMarinaraPasta()
+    {
+        return new Pasta(PastaTopping.MARINARA);
+    }
+
+    /**
+     * Creates Creamy Primavera pasta
+     * @return Primavera pasta
+     */
+    private Pasta createCreamyPrimaveraPasta()
+    {
+        return new Pasta(PastaTopping.PRIMAVERA);
+    }
+
+    /**
+     * Creates Hawaiian pizza (ham, pineapple, cheese)
+     * @return Hawaiian pizza
+     */
+    private Pizza createHawaiianPizza()
+    {
+        List<PizzaTopping> toppings = Arrays.asList(
+                PizzaTopping.HAM,
+                PizzaTopping.PINEAPPLE,
+                PizzaTopping.CHEESE
+        );
+        return new Pizza(toppings);
+    }
+
+    /**
+     * Creates Hearty Bolognese pasta
+     * @return Bolognese pasta
+     */
+    private Pasta createHeartyBolognese()
+    {
+        return new Pasta(PastaTopping.BOLOGNESE);
+    }
+
+    /**
+     * Creates Margherita pizza (cheese, tomato)
+     * @return Margherita pizza
+     */
+    private Pizza createMargheritaPizza()
+    {
+        List<PizzaTopping> toppings = Arrays.asList(
+                PizzaTopping.CHEESE,
+                PizzaTopping.TOMATO
+        );
+        return new Pizza(toppings);
+    }
+
+    /**
+     * Creates Meat Lovers pizza (ham, seafood, cheese)
+     * @return Meat Lovers pizza
+     */
+    private Pizza createMeatLoversPizza()
+    {
+        List<PizzaTopping> toppings = Arrays.asList(
+                PizzaTopping.HAM,
+                PizzaTopping.SEAFOOD,
+                PizzaTopping.CHEESE
+        );
+        return new Pizza(toppings);
+    }
+
+    /**
+     * Creates Seafood Deluxe pizza (seafood, cheese, tomato)
+     * @return Seafood Deluxe pizza
+     */
+    private Pizza createSeafoodDeluxePizza()
+    {
+        List<PizzaTopping> toppings = Arrays.asList(
+                PizzaTopping.SEAFOOD,
+                PizzaTopping.CHEESE,
+                PizzaTopping.TOMATO
+        );
+        return new Pizza(toppings);
+    }
+
+    /**
+     * Creates Simple Tomato pasta
+     * @return Tomato pasta
+     */
+    private Pasta createSimpleTomatoPasta()
+    {
+        return new Pasta(PastaTopping.TOMATO);
+    }
+
+    /**
+     * Creates Vegetarian Supreme pizza (cheese, mushrooms, tomato, pineapple)
+     * @return Vegetarian Supreme pizza
+     */
+    private Pizza createVegetarianSupremePizza()
+    {
+        List<PizzaTopping> toppings = Arrays.asList(
+                PizzaTopping.CHEESE,
+                PizzaTopping.MUSHROOMS,
+                PizzaTopping.TOMATO,
+                PizzaTopping.PINEAPPLE
+        );
+        return new Pizza(toppings);
+    }
+
+    /**
+     * Creates a custom pasta based on parameters
+     * @param parameters map containing pasta parameters
+     * @return the created pasta
+     */
+    private Pasta createPasta(Map<String, Object> parameters)
+    {
+        if (parameters == null || parameters.isEmpty())
+        {
+            return new Pasta(); // Plain pasta
+        }
+
+        PastaTopping topping = (PastaTopping) parameters.get("topping");
+
+        if (topping == null)
+        {
+            return new Pasta();
+        }
+
+        return new Pasta(topping);
+    }
+
+    /**
+     * Creates a custom pizza based on parameters
+     * @param parameters map containing pizza parameters
+     * @return the created pizza
+     */
+    private Pizza createPizza(Map<String, Object> parameters)
+    {
+        if (parameters == null || parameters.isEmpty())
+        {
+            return new Pizza();
+        }
+
+        @SuppressWarnings("unchecked")
+        List<PizzaTopping> toppings = (List<PizzaTopping>) parameters.get("toppings");
+
+        if (toppings == null)
+        {
+            return new Pizza();
+        }
+
+        return new Pizza(toppings);
     }
 
     /**
@@ -110,12 +265,15 @@ public class RestaurantFoodFactory implements FoodFactory
      * @return detailed description with ingredients
      */
     @Override
-    public String getMenuItemDescription(String menuItemName) {
-        if (menuItemName == null) {
+    public String getMenuItemDescription(String menuItemName)
+    {
+        if (menuItemName == null)
+        {
             throw new IllegalArgumentException("Menu item name cannot be null");
         }
 
-        switch (menuItemName.toLowerCase()) {
+        switch (menuItemName.toLowerCase())
+        {
             // Pizza descriptions
             case "hawaiian_pizza":
                 return "Ham, pineapple, and cheese";
@@ -141,152 +299,5 @@ public class RestaurantFoodFactory implements FoodFactory
             default:
                 return "Description not available";
         }
-    }
-
-    /**
-     * Creates a custom pizza based on parameters
-     * @param parameters map containing pizza parameters
-     * @return the created pizza
-     */
-    private Pizza createPizza(Map<String, Object> parameters)
-    {
-        if (parameters == null || parameters.isEmpty()) {
-            return new Pizza(); // Plain pizza
-        }
-
-        @SuppressWarnings("unchecked")
-        List<PizzaTopping> toppings = (List<PizzaTopping>) parameters.get("toppings");
-
-        if (toppings == null) {
-            return new Pizza();
-        }
-
-        return new Pizza(toppings);
-    }
-
-    /**
-     * Creates a custom pasta based on parameters
-     * @param parameters map containing pasta parameters
-     * @return the created pasta
-     */
-    private Pasta createPasta(Map<String, Object> parameters)
-    {
-        if (parameters == null || parameters.isEmpty()) {
-            return new Pasta(); // Plain pasta
-        }
-
-        PastaTopping topping = (PastaTopping) parameters.get("topping");
-
-        if (topping == null) {
-            return new Pasta();
-        }
-
-        return new Pasta(topping);
-    }
-
-    /**
-     * Creates Hawaiian pizza (ham, pineapple, cheese)
-     * @return Hawaiian pizza
-     */
-    private Pizza createHawaiianPizza()
-    {
-        List<PizzaTopping> toppings = Arrays.asList(
-                PizzaTopping.HAM,
-                PizzaTopping.PINEAPPLE,
-                PizzaTopping.CHEESE
-        );
-        return new Pizza(toppings);
-    }
-
-    /**
-     * Creates Meat Lovers pizza (ham, seafood, cheese)
-     * @return Meat Lovers pizza
-     */
-    private Pizza createMeatLoversPizza()
-    {
-        List<PizzaTopping> toppings = Arrays.asList(
-                PizzaTopping.HAM,
-                PizzaTopping.SEAFOOD,
-                PizzaTopping.CHEESE
-        );
-        return new Pizza(toppings);
-    }
-
-    /**
-     * Creates Vegetarian Supreme pizza (cheese, mushrooms, tomato, pineapple)
-     * @return Vegetarian Supreme pizza
-     */
-    private Pizza createVegetarianSupremePizza()
-    {
-        List<PizzaTopping> toppings = Arrays.asList(
-                PizzaTopping.CHEESE,
-                PizzaTopping.MUSHROOMS,
-                PizzaTopping.TOMATO,
-                PizzaTopping.PINEAPPLE
-        );
-        return new Pizza(toppings);
-    }
-
-    /**
-     * Creates Margherita pizza (cheese, tomato)
-     * @return Margherita pizza
-     */
-    private Pizza createMargheritaPizza()
-    {
-        List<PizzaTopping> toppings = Arrays.asList(
-                PizzaTopping.CHEESE,
-                PizzaTopping.TOMATO
-        );
-        return new Pizza(toppings);
-    }
-
-    /**
-     * Creates Seafood Deluxe pizza (seafood, cheese, tomato)
-     * @return Seafood Deluxe pizza
-     */
-    private Pizza createSeafoodDeluxePizza()
-    {
-        List<PizzaTopping> toppings = Arrays.asList(
-                PizzaTopping.SEAFOOD,
-                PizzaTopping.CHEESE,
-                PizzaTopping.TOMATO
-        );
-        return new Pizza(toppings);
-    }
-
-    /**
-     * Creates Classic Marinara pasta
-     * @return Marinara pasta
-     */
-    private Pasta createClassicMarinaraPasta()
-    {
-        return new Pasta(PastaTopping.MARINARA);
-    }
-
-    /**
-     * Creates Creamy Primavera pasta
-     * @return Primavera pasta
-     */
-    private Pasta createCreamyPrimaveraPasta()
-    {
-        return new Pasta(PastaTopping.PRIMAVERA);
-    }
-
-    /**
-     * Creates Hearty Bolognese pasta
-     * @return Bolognese pasta
-     */
-    private Pasta createHeartyBolognese()
-    {
-        return new Pasta(PastaTopping.BOLOGNESE);
-    }
-
-    /**
-     * Creates Simple Tomato pasta
-     * @return Tomato pasta
-     */
-    private Pasta createSimpleTomatoPasta()
-    {
-        return new Pasta(PastaTopping.TOMATO);
     }
 }

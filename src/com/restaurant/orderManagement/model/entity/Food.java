@@ -6,16 +6,16 @@ import java.io.Serializable;
 
 /**
  * Abstract class representing a food item with price calculation and meal type determination
- * Author: Student
+ * Author: Liaw Hang Sheng
  * Version: 1.0
  */
 public abstract class Food implements Serializable
 {
     protected static final double BASE_PRICE = 11.50;
-    public double price;
+    protected double price;
 
     /**
-     * Default constructor for com.restaurant.orderManagement.model.entity.Food
+     * Default constructor for Food
      */
     public Food()
     {
@@ -29,11 +29,6 @@ public abstract class Food implements Serializable
     public abstract double calculatePrice();
 
     /**
-     * Abstract method to determine the meal type of the food item
-     * @return the meal type as a com.restaurant.orderManagement.model.enums.MealType enum
-     */
-    public abstract MealType getMealType();
-    /**
      * Gets the base price for all food items
      * @return the base price as a double
      */
@@ -41,6 +36,12 @@ public abstract class Food implements Serializable
     {
         return BASE_PRICE;
     }
+
+    /**
+     * Abstract method to determine the meal type of the food item
+     * @return the meal type as a MealType enum
+     */
+    public abstract MealType getMealType();
 
     /**
      * Gets the price of the food item

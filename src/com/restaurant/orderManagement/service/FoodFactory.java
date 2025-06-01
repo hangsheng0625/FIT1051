@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * Factory interface for creating different types of food items
- * Author: Student
+ * Author: Liaw Hang Sheng
  * Version: 1.0
  */
 public interface FoodFactory
