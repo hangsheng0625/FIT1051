@@ -4,6 +4,7 @@ import com.restaurant.orderManagement.model.entity.*;
 import com.restaurant.orderManagement.model.enums.*;
 import java.io.*;
 import java.util.*;
+
 /**
  * Main class for managing takeaway orders with queue management and file persistence
  * Author: Liaw Hang Sheng
@@ -30,22 +31,6 @@ public class OrderManager
         this.foodFactory = new RestaurantFoodFactory();
         loadOrdersFromFile();
         loadCustomerHistoryFromFile();
-    }
-
-    /**
-     * Adds a new order to the queue and customer history
-     * @param order the order to add
-     */
-    public void addOrder(Order order)
-    {
-        orderQueue.offer(order);
-
-        String customerName = order.getCustomerName().toLowerCase();
-        customerHistory.putIfAbsent(customerName, new ArrayList<Order>());
-        customerHistory.get(customerName).add(order);
-
-        saveOrdersToFile();
-        saveCustomerHistoryToFile();
     }
 
     /**
@@ -135,6 +120,22 @@ public class OrderManager
         Pizza pizza = new Pizza(selectedToppings);
         order.addFoodItem(pizza);
         System.out.println("Added: " + pizza.toString());
+    }
+
+    /**
+     * Adds a new order to the queue and customer history
+     * @param order the order to add
+     */
+    public void addOrder(Order order)
+    {
+        orderQueue.offer(order);
+
+        String customerName = order.getCustomerName().toLowerCase();
+        customerHistory.putIfAbsent(customerName, new ArrayList<Order>());
+        customerHistory.get(customerName).add(order);
+
+        saveOrdersToFile();
+        saveCustomerHistoryToFile();
     }
 
     /**
