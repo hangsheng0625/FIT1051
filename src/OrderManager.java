@@ -143,10 +143,10 @@ public class OrderManager
     private void addPizzaToOrder(Order order)
     {
         System.out.println("\nPizza Toppings (select multiple by entering numbers separated by spaces):");
-        System.out.println("0. Plain pizza (no toppings) - $" + String.format("%.2f", Food.BASE_PRICE));
+        System.out.println("1. Plain pizza (no toppings) - $" + String.format("%.2f", Food.BASE_PRICE));
 
         PizzaTopping[] toppings = PizzaTopping.values();
-        for (int i = 0; i < toppings.length; i++)
+        for (int i = 1; i < toppings.length; i++)
         {
             System.out.println((i + 1) + ". " + toppings[i].toString().toLowerCase() +
                     " - $" + String.format("%.2f", toppings[i].getPrice()) + " extra");
@@ -442,15 +442,7 @@ public class OrderManager
         }
     }
 
-    /**
-     * Main method to run the order management system
-     * @param arguments command line arguments (not used)
-     */
-    public static void main(String[] arguments)
-    {
-        OrderManager manager = new OrderManager();
-        manager.run();
-    }
+
 
     /**
      * Prints all orders in the queue
