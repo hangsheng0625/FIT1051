@@ -15,7 +15,7 @@ public class Main
      */
     public static void main(String[] arguments)
     {
-        System.out.println("Starting Takeaway com.restaurant.orderManagement.model.entity.Order Management System...");
+        System.out.println("Starting Takeaway Order Management System...");
 
         OrderManager manager = new OrderManager();
         manager.run();

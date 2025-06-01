@@ -100,7 +100,7 @@ public class Pasta extends Food
     @Override
     public String toString()
     {
-        StringBuilder description = new StringBuilder("com.restaurant.orderManagement.model.entity.Pasta");
+        StringBuilder description = new StringBuilder("Pasta");
         if (topping == null)
         {
             description.append(" (Plain)");

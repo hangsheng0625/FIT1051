@@ -129,7 +129,7 @@ public class Pizza extends Food
     @Override
     public String toString()
     {
-        StringBuilder description = new StringBuilder("com.restaurant.orderManagement.model.entity.Pizza");
+        StringBuilder description = new StringBuilder("Pizza");
         if (toppings.isEmpty())
         {
             description.append(" (Plain)");

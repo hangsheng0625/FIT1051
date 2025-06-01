@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 public abstract class Food implements Serializable
 {
-    public static final double BASE_PRICE = 11.50;
+    protected static final double BASE_PRICE = 11.50;
     public double price;
 
     /**
@@ -33,6 +33,14 @@ public abstract class Food implements Serializable
      * @return the meal type as a com.restaurant.orderManagement.model.enums.MealType enum
      */
     public abstract MealType getMealType();
+    /**
+     * Gets the base price for all food items
+     * @return the base price as a double
+     */
+    public static double getBasePrice()
+    {
+        return BASE_PRICE;
+    }
 
     /**
      * Gets the price of the food item

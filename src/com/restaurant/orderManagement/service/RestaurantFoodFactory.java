@@ -41,7 +41,7 @@ public class RestaurantFoodFactory implements FoodFactory
     public Food createFood(String foodType, Map<String, Object> parameters)
     {
         if (foodType == null) {
-            throw new IllegalArgumentException("com.restaurant.orderManagement.model.entity.Food type cannot be null");
+            throw new IllegalArgumentException("Food type cannot be null");
         }
 
         switch (foodType.toLowerCase()) {

@@ -230,13 +230,13 @@ public class Order implements Serializable
         StringBuilder orderDetails = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-        orderDetails.append("com.restaurant.orderManagement.model.entity.Order Details:\n");
+        orderDetails.append("Order Details:\n");
         orderDetails.append("Customer: ").append(customerName).append("\n");
         orderDetails.append("Contact: ").append(contactNumber).append("\n");
         orderDetails.append("Address: ").append(deliveryAddress).append("\n");
-        orderDetails.append("com.restaurant.orderManagement.model.entity.Order Time: ").append(orderTime.format(formatter)).append("\n");
+        orderDetails.append("Order Time: ").append(orderTime.format(formatter)).append("\n");
         orderDetails.append("Meal Type: ").append(mealType.toString()).append("\n");
-        orderDetails.append("com.restaurant.orderManagement.model.entity.Food Items:\n");
+        orderDetails.append("Food Items:\n");
 
         for (int i = 0; i < foodItems.size(); i++)
         {
