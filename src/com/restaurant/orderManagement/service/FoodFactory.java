@@ -30,4 +30,10 @@ public interface FoodFactory
      * @return array of menu item names
      */
     String[] getAvailableMenuItems();
+
+    /**
+     * Gets a list of all adding ingredients of the pre-defined menu items
+     * @return the ingredients of each food
+     */
+    String getMenuItemDescription(String menuItemName);
 }

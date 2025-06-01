@@ -105,6 +105,45 @@ public class RestaurantFoodFactory implements FoodFactory
     }
 
     /**
+     * Gets a detailed description of a menu item showing ingredients
+     * @param menuItemName the name of the menu item
+     * @return detailed description with ingredients
+     */
+    @Override
+    public String getMenuItemDescription(String menuItemName) {
+        if (menuItemName == null) {
+            throw new IllegalArgumentException("Menu item name cannot be null");
+        }
+
+        switch (menuItemName.toLowerCase()) {
+            // Pizza descriptions
+            case "hawaiian_pizza":
+                return "Ham, pineapple, and cheese";
+            case "meat_lovers_pizza":
+                return "Ham, seafood, and cheese";
+            case "vegetarian_supreme_pizza":
+                return "Cheese, mushrooms, tomato, and pineapple";
+            case "margherita_pizza":
+                return "Cheese and tomato";
+            case "seafood_deluxe_pizza":
+                return "Seafood, cheese, and tomato";
+
+            // Pasta descriptions
+            case "classic_marinara_pasta":
+                return "Pasta with marinara sauce (contains meat)";
+            case "creamy_primavera_pasta":
+                return "Pasta with primavera sauce (vegetarian)";
+            case "hearty_bolognese_pasta":
+                return "Pasta with bolognese sauce (contains meat)";
+            case "simple_tomato_pasta":
+                return "Pasta with tomato sauce (vegan)";
+
+            default:
+                return "Description not available";
+        }
+    }
+
+    /**
      * Creates a custom pizza based on parameters
      * @param parameters map containing pizza parameters
      * @return the created pizza

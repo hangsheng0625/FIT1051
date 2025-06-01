@@ -215,17 +215,16 @@ public class OrderManager
             }
         }
 
-        for (int i = 0; i < pastaItems.size(); i++)
-        {
+        for (int i = 0; i < pastaItems.size(); i++) {
             String displayName = formatMenuItemName(pastaItems.get(i));
-            try
-            {
-                Food samplePasta = foodFactory.createMenuItemByName(pastaItems.get(i));
-                System.out.printf("%d. %s - $%.2f%n", (i + 1), displayName, samplePasta.getPrice());
-            }
-            catch (IllegalArgumentException e)
-            {
-                System.out.printf("%d. %s%n", (i + 1), displayName);
+            String description = foodFactory.getMenuItemDescription(pastaItems.get(i));
+
+            try {
+                Food samplePizza = foodFactory.createMenuItemByName(pastaItems.get(i));
+                System.out.printf("%d. %s (%s) - $%.2f%n",
+                        (i + 1), displayName, description, samplePizza.getPrice());
+            } catch (IllegalArgumentException e) {
+                System.out.printf("%d. %s (%s)%n", (i + 1), displayName, description);
             }
         }
 
@@ -318,17 +317,16 @@ public class OrderManager
             }
         }
 
-        for (int i = 0; i < pizzaItems.size(); i++)
-        {
+        for (int i = 0; i < pizzaItems.size(); i++) {
             String displayName = formatMenuItemName(pizzaItems.get(i));
-            try
-            {
+            String description = foodFactory.getMenuItemDescription(pizzaItems.get(i));
+
+            try {
                 Food samplePizza = foodFactory.createMenuItemByName(pizzaItems.get(i));
-                System.out.printf("%d. %s - $%.2f%n", (i + 1), displayName, samplePizza.getPrice());
-            }
-            catch (IllegalArgumentException e)
-            {
-                System.out.printf("%d. %s%n", (i + 1), displayName);
+                System.out.printf("%d. %s (%s) - $%.2f%n",
+                        (i + 1), displayName, description, samplePizza.getPrice());
+            } catch (IllegalArgumentException e) {
+                System.out.printf("%d. %s (%s)%n", (i + 1), displayName, description);
             }
         }
 
@@ -437,24 +435,23 @@ public class OrderManager
     /**
      * Displays pre-defined menu items from the factory
      */
-    private void displayMenuItems()
-    {
+    private void displayMenuItems() {
         System.out.println("\nSelect from our menu:");
         String[] menuItems = foodFactory.getAvailableMenuItems();
 
-        for (int i = 0; i < menuItems.length; i++)
-        {
+        for (int i = 0; i < menuItems.length; i++) {
             String displayName = formatMenuItemName(menuItems[i]);
 
-            // Create a sample item to show price
-            try
-            {
+            // Get description with ingredients
+            String description = foodFactory.getMenuItemDescription(menuItems[i]);
+
+            try {
                 Food sampleItem = foodFactory.createMenuItemByName(menuItems[i]);
-                System.out.printf("%d. %s - $%.2f%n", (i + 1), displayName, sampleItem.getPrice());
-            }
-            catch (IllegalArgumentException e)
-            {
-                System.out.printf("%d. %s%n", (i + 1), displayName);
+                // Enhanced display with ingredients!
+                System.out.printf("%d. %s (%s) - $%.2f%n",
+                        (i + 1), displayName, description, sampleItem.getPrice());
+            } catch (IllegalArgumentException e) {
+                System.out.printf("%d. %s (%s)%n", (i + 1), displayName, description);
             }
         }
 
